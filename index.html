@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="en" class="dark h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>YOUNOVA — Your AI. Your Universe.</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            black: '#000000',
+                            surface: '#0A0A0A',
+                            surfaceLight: '#141414',
+                            border: '#242027',
+                            primary: '#A855F7',
+                            bright: '#C084FC',
+                            deep: '#7E22CE',
+                            text: '#F5F3F7',
+                            muted: '#A1A1AA'
+                        }
+                    },
+                    boxShadow: {
+                        'glow-purple': '0 0 25px rgba(168, 85, 247, 0.25)',
+                        'glow-purple-sm': '0 0 12px rgba(168, 85, 247, 0.18)'
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Inter & JetBrains Mono Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- Marked.js for Markdown -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
+    <!-- Highlight.js for Code Syntax -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    
+    <!-- KaTeX for Math, Physics & Chemistry Formulas/Symbols -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #000000;
+            color: #F5F3F7;
+            overflow: hidden;
+        }
+        pre code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+            direction: ltr;
+            text-align: left;
+        }
+        /* RTL & Text Alignment Support for Arabic / Hebrew / Persian */
+        .message-body[dir="rtl"] {
+            text-align: right;
+            direction: rtl;
+        }
+        .message-body[dir="ltr"] {
+            text-align: left;
+            direction: ltr;
+        }
+        .message-body[dir="rtl"] ul, .message-body[dir="rtl"] ol {
+            padding-right: 1.25rem;
+            padding-left: 0;
+        }
+        .message-body[dir="rtl"] th, .message-body[dir="rtl"] td {
+            text-align: right;
+        }
+        /* Custom Scrollbars */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #242027;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #7E22CE;
+        }
+        .prose pre {
+            background-color: #0d0d0e !important;
+            border: 1px solid #242027;
+            border-radius: 0.5rem;
+            padding: 0;
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .prose p {
+            margin-bottom: 0.75rem;
+            line-height: 1.625;
+        }
+        .prose ul, .prose ol {
+            padding-left: 1.25rem;
+            margin-bottom: 0.75rem;
+        }
+        .prose ul { list-style-type: disc; }
+        .prose ol { list-style-type: decimal; }
+        .prose table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1rem;
+        }
+        .prose th, .prose td {
+            border: 1px solid #242027;
+            padding: 0.5rem 0.75rem;
+            text-align: left;
+        }
+        .prose th { background-color: #141414; }
+        @keyframes pulse-purple {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.7; }
+        }
+        .animate-pulse-purple {
+            animation: pulse-purple 1.5s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="h-full flex flex-col bg-brand-black text-brand-text">
+
+    <!-- App Container -->
+    <div id="app" class="flex h-full w-full relative overflow-hidden">
+
+        <!-- MAIN WORKSPACE -->
+        <main class="flex-1 flex flex-col h-full bg-brand-black relative min-w-0">
+            <!-- Header Bar -->
+            <header class="h-14 border-b border-brand-border px-4 sm:px-6 flex items-center justify-between bg-brand-black/80 backdrop-blur z-20">
+                <div class="flex items-center space-x-3">
+                    <div class="flex items-center space-x-3 cursor-pointer" id="logo-btn">
+                        <svg class="w-7 h-7 text-brand-primary filter drop-shadow-[0_0_8px_rgba(168,85,247,0.5)]" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <ellipse cx="50" cy="50" rx="42" ry="14" stroke="currentColor" stroke-width="4.5" transform="rotate(0 50 50)" />
+                            <ellipse cx="50" cy="50" rx="42" ry="14" stroke="currentColor" stroke-width="4.5" transform="rotate(60 50 50)" />
+                            <ellipse cx="50" cy="50" rx="42" ry="14" stroke="currentColor" stroke-width="4.5" transform="rotate(120 50 50)" />
+                            <circle cx="50" cy="50" r="9" fill="#C084FC" />
+                        </svg>
+                        <span class="font-bold text-lg tracking-wider text-brand-text">YOUNOVA</span>
+                    </div>
+                </div>
+
+                <div class="flex items-center space-x-3 relative">
+                    <!-- Top Right Menu Dropdown -->
+                    <div class="relative">
+                        <button id="menu-toggle-btn" class="p-2 rounded-xl text-brand-muted hover:text-brand-bright hover:bg-brand-surfaceLight border border-brand-border transition flex items-center gap-2">
+                            <i data-lucide="menu" class="w-4 h-4"></i>
+                            <span class="text-xs font-medium hidden sm:inline">Menu</span>
+                        </button>
+                        
+                        <!-- Dropdown Menu Box -->
+                        <div id="menu-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-brand-surface border border-brand-border rounded-xl shadow-glow-purple-sm py-1.5 z-50">
+                            <button id="menu-new-chat" class="w-full text-left px-4 py-2.5 text-xs text-brand-text hover:bg-brand-surfaceLight flex items-center gap-2.5 transition">
+                                <i data-lucide="plus-circle" class="w-4 h-4 text-brand-primary"></i>
+                                <span>New Chat</span>
+                            </button>
+                            <button id="menu-settings" class="w-full text-left px-4 py-2.5 text-xs text-brand-text hover:bg-brand-surfaceLight flex items-center gap-2.5 transition border-t border-brand-border">
+                                <i data-lucide="settings" class="w-4 h-4 text-brand-primary"></i>
+                                <span>API Settings</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Chat Content Workspace -->
+            <div id="chat-workspace" class="flex-1 overflow-y-auto relative p-4 md:p-6 space-y-6">
+                <!-- Welcome View -->
+                <div id="welcome-screen" class="h-full flex flex-col items-center justify-center max-w-2xl mx-auto text-center px-4 py-8 space-y-6">
+                    <div class="relative group cursor-pointer" id="logo-focus-trigger">
+                        <div class="absolute -inset-1 bg-gradient-to-r from-brand-primary to-brand-bright rounded-full blur opacity-25 group-hover:opacity-60 transition duration-500"></div>
+                        <svg class="w-20 h-20 text-brand-primary relative" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <ellipse cx="50" cy="50" rx="42" ry="14" stroke="currentColor" stroke-width="4" transform="rotate(0 50 50)" />
+                            <ellipse cx="50" cy="50" rx="42" ry="14" stroke="currentColor" stroke-width="4" transform="rotate(60 50 50)" />
+                            <ellipse cx="50" cy="50" rx="42" ry="14" stroke="currentColor" stroke-width="4" transform="rotate(120 50 50)" />
+                            <circle cx="50" cy="50" r="10" fill="#C084FC" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-brand-text mb-2">How can I help you today?</h1>
+                        <p class="text-sm text-brand-muted">Ask anything, solve equations, write code, or create new ideas.</p>
+                    </div>
+
+                    <!-- Suggestion Cards Grid -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full mt-4 text-left">
+                        <button class="prompt-card p-3.5 rounded-xl border border-brand-border bg-brand-surface hover:bg-brand-surfaceLight hover:border-brand-primary/60 transition group" data-prompt="Solve Schrödinger's time-independent wave equation for a 1D particle in a box: -\frac{\hbar^2}{2m} \frac{d^2\psi}{dx^2} = E\psi">
+                            <div class="flex items-center space-x-2 text-brand-bright text-xs font-semibold mb-1">
+                                <i data-lucide="atom" class="w-4 h-4"></i>
+                                <span>Physics & Math</span>
+                            </div>
+                            <p class="text-xs text-brand-muted group-hover:text-brand-text transition line-clamp-2">Derive the wave function and energy levels for a particle in a box.</p>
+                        </button>
+
+                        <button class="prompt-card p-3.5 rounded-xl border border-brand-border bg-brand-surface hover:bg-brand-surfaceLight hover:border-brand-primary/60 transition group" data-prompt="Explain quantum entanglement and present key mathematical formulations in LaTeX.">
+                            <div class="flex items-center space-x-2 text-brand-bright text-xs font-semibold mb-1">
+                                <i data-lucide="brain" class="w-4 h-4"></i>
+                                <span>Quantum Concepts</span>
+                            </div>
+                            <p class="text-xs text-brand-muted group-hover:text-brand-text transition line-clamp-2">Explain quantum entanglement with standard notation.</p>
+                        </button>
+
+                        <button class="prompt-card p-3.5 rounded-xl border border-brand-border bg-brand-surface hover:bg-brand-surfaceLight hover:border-brand-primary/60 transition group" data-prompt="Write a clean JavaScript function for debouncing API calls with full error handling.">
+                            <div class="flex items-center space-x-2 text-brand-bright text-xs font-semibold mb-1">
+                                <i data-lucide="code" class="w-4 h-4"></i>
+                                <span>Code Generation</span>
+                            </div>
+                            <p class="text-xs text-brand-muted group-hover:text-brand-text transition line-clamp-2">Write a clean JavaScript Debounce function.</p>
+                        </button>
+
+                        <button class="prompt-card p-3.5 rounded-xl border border-brand-border bg-brand-surface hover:bg-brand-surfaceLight hover:border-brand-primary/60 transition group" data-prompt="Who created you and what is your identity?">
+                            <div class="flex items-center space-x-2 text-brand-bright text-xs font-semibold mb-1">
+                                <i data-lucide="sparkles" class="w-4 h-4"></i>
+                                <span>Identity</span>
+                            </div>
+                            <p class="text-xs text-brand-muted group-hover:text-brand-text transition line-clamp-2">Ask about YOUNOVA's origin and identity.</p>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Messages Container -->
+                <div id="messages-list" class="max-w-3xl mx-auto space-y-6 hidden pb-12">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+
+            <!-- COMPOSER -->
+            <div class="p-3 md:p-4 bg-brand-black/95 border-t border-brand-border">
+                <div class="max-w-3xl mx-auto relative">
+                    <!-- Attachment Preview Container -->
+                    <div id="attachment-preview" class="hidden mb-2 flex items-center gap-2 flex-wrap"></div>
+
+                    <!-- Input Box -->
+                    <div class="relative bg-brand-surface border border-brand-border focus-within:border-brand-primary rounded-2xl shadow-lg transition duration-200">
+                        <textarea id="message-input" rows="1" placeholder="Type your message to YOUNOVA..." class="w-full bg-transparent py-3.5 pl-11 pr-32 text-sm text-brand-text placeholder-brand-muted focus:outline-none resize-none max-h-48 overflow-y-auto block"></textarea>
+
+                        <!-- Left Action (Image Attachment Button) -->
+                        <div class="absolute left-3 bottom-3 flex items-center">
+                            <label class="cursor-pointer text-brand-muted hover:text-brand-bright transition p-1 rounded-lg" title="Attach Image">
+                                <i data-lucide="image" class="w-4 h-4"></i>
+                                <input type="file" id="file-attachment" class="hidden" accept="image/*">
+                            </label>
+                        </div>
+
+                        <!-- Right Actions (Voice, Stop & Send Button) -->
+                        <div class="absolute right-3 bottom-2.5 flex items-center space-x-1.5">
+                            <button id="voice-btn" title="Voice Input" class="p-1.5 rounded-xl text-brand-muted hover:text-brand-bright hover:bg-brand-surfaceLight transition">
+                                <i data-lucide="mic" class="w-4 h-4"></i>
+                            </button>
+
+                            <button id="stop-btn" class="hidden p-2 rounded-xl bg-red-600 hover:bg-red-500 text-white font-semibold transition" title="Stop Generation">
+                                <i data-lucide="square" class="w-4 h-4 fill-current"></i>
+                            </button>
+
+                            <button id="send-btn" class="p-2 rounded-xl bg-brand-primary hover:bg-brand-bright text-black font-semibold transition flex items-center justify-center shadow-glow-purple-sm" title="Send Message">
+                                <i data-lucide="send" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="mt-2 flex items-center justify-between text-[11px] text-brand-muted px-2">
+                        <span>YOUNOVA may produce inaccurate info. Verify important information.</span>
+                        <span id="char-count">0 chars</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- SETTINGS & API MODAL -->
+    <div id="settings-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-brand-surface border border-brand-border w-full max-w-lg rounded-2xl shadow-glow-purple overflow-hidden flex flex-col">
+            <div class="p-4 border-b border-brand-border flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                    <i data-lucide="sliders" class="w-5 h-5 text-brand-primary"></i>
+                    <h2 class="text-base font-semibold text-brand-text">YOUNOVA Settings</h2>
+                </div>
+                <button id="close-settings-btn" class="text-brand-muted hover:text-white p-1 rounded-lg">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Content -->
+            <div class="p-5 space-y-4 text-sm">
+                <div class="p-3.5 bg-brand-black rounded-xl border border-brand-border space-y-2">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-semibold text-brand-bright">Provider: Google Gemini API</span>
+                        <a href="https://aistudio.google.com/" target="_blank" rel="noopener" class="text-xs text-brand-primary hover:underline flex items-center gap-1">
+                            Get API Key <i data-lucide="external-link" class="w-3 h-3"></i>
+                        </a>
+                    </div>
+                    <p class="text-xs text-brand-muted leading-relaxed">
+                        Connect your Google Gemini API Key to power YOUNOVA. Your key is stored securely in your local browser storage.
+                    </p>
+                </div>
+
+                <div class="space-y-1.5">
+                    <label class="text-xs font-medium text-brand-text flex justify-between">
+                        <span>Gemini API Key</span>
+                        <span id="key-status-label" class="text-[11px] text-yellow-500">Not Configured</span>
+                    </label>
+                    <div class="relative">
+                        <input type="password" id="api-key-input" placeholder="AIzaSy..." class="w-full bg-brand-black border border-brand-border rounded-xl pl-3.5 pr-10 py-2.5 text-xs text-brand-text focus:outline-none focus:border-brand-primary transition">
+                        <button type="button" id="btn-toggle-key-visibility" class="absolute right-3 top-2.5 text-brand-muted hover:text-brand-text">
+                            <i data-lucide="eye" id="eye-icon" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2 pt-2">
+                    <button id="btn-save-key" class="py-2 px-3 rounded-xl bg-brand-primary hover:bg-brand-bright text-black font-medium text-xs transition">Save Key</button>
+                    <button id="btn-test-key" class="py-2 px-3 rounded-xl border border-brand-border hover:border-brand-primary text-brand-text text-xs transition">Test Connection</button>
+                </div>
+
+                <div class="flex justify-end pt-1">
+                    <button id="btn-remove-key" class="text-xs text-red-400 hover:text-red-300 underline">Remove Saved Key</button>
+                </div>
+
+                <div id="api-test-result" class="hidden p-3 rounded-xl text-xs border"></div>
+            </div>
+
+            <div class="p-4 border-t border-brand-border bg-brand-black flex justify-between items-center text-[11px] text-brand-muted">
+                <span>YOUNOVA • Developed by YOUNESS</span>
+                <button id="close-settings-bottom-btn" class="px-3 py-1.5 rounded-lg bg-brand-surfaceLight border border-brand-border hover:text-white transition">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN APPLICATION LOGIC -->
+    <script>
+        class YounovaApp {
+            constructor() {
+                // Pre-configure the provided API key as default if none exists in localStorage
+                const defaultApiKey = 'AQ.Ab8RN6IKfAHlnhOv9LUoLPk8qXSz-wJfpbcgCrCkUlEeyziK4w';
+                if (!localStorage.getItem('younova_gemini_key')) {
+                    localStorage.setItem('younova_gemini_key', defaultApiKey);
+                }
+                
+                this.apiKey = localStorage.getItem('younova_gemini_key') || defaultApiKey;
+                this.currentModel = 'gemini-3-flash-preview';
+                this.currentMessages = [];
+                this.systemInstruction = `You are YOUNESS, an advanced artificial intelligence model developed by the YOUNESS team.
+                
+CRITICAL RULES:
+1. Always respond in the EXACT language used by the user in their prompt (e.g. if asked in Arabic, respond in Arabic; if in French, respond in French, etc.).
+2. Identity: If asked about your identity or who created/developed you, state clearly that you are an advanced AI model developed by the YOUNESS team ("نموذج ذكاء اصطناعي متطور بواسطة فريق YOUNESS").
+3. Math, Physics & Chemistry Formulas: When asked math, physics, or chemistry questions, write formulas and symbols cleanly using LaTeX syntax (e.g., $E = mc^2$, $a^2 + b^2 = c^2$, or block math with $$...$$) so KaTeX can render them directly.`;
+                
+                this.pendingFile = null;
+                this.abortController = null;
+                this.isGenerating = false;
+                this.recognition = null;
+
+                this.init();
+            }
+
+            init() {
+                lucide.createIcons();
+
+                // Configure Markdown parser
+                marked.setOptions({
+                    highlight: function(code, lang) {
+                        const language = hljs.getLanguage(lang) ? lang : 'plaintext';
+                        return hljs.highlight(code, { language }).value;
+                    },
+                    langPrefix: 'hljs language-'
+                });
+
+                this.setupEventListeners();
+                this.updateKeyStatusUI();
+                this.initSpeechRecognition();
+            }
+
+            setupEventListeners() {
+                const input = document.getElementById('message-input');
+                input?.addEventListener('input', () => {
+                    input.style.height = 'auto';
+                    input.style.height = Math.min(input.scrollHeight, 192) + 'px';
+                    document.getElementById('char-count').innerText = `${input.value.length} chars`;
+                });
+
+                input?.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        this.sendMessage();
+                    }
+                });
+
+                document.getElementById('send-btn')?.addEventListener('click', () => this.sendMessage());
+                document.getElementById('logo-btn')?.addEventListener('click', () => this.startNewChat());
+
+                // Top Menu Dropdown Toggle & Actions
+                const menuToggleBtn = document.getElementById('menu-toggle-btn');
+                const menuDropdown = document.getElementById('menu-dropdown');
+                
+                menuToggleBtn?.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    menuDropdown.classList.toggle('hidden');
+                });
+
+                document.addEventListener('click', () => {
+                    menuDropdown?.classList.add('hidden');
+                });
+
+                document.getElementById('menu-new-chat')?.addEventListener('click', () => {
+                    this.startNewChat();
+                    menuDropdown?.classList.add('hidden');
+                });
+
+                document.getElementById('menu-settings')?.addEventListener('click', () => {
+                    this.openSettings();
+                    menuDropdown?.classList.add('hidden');
+                });
+
+                // Actions & Stop Button
+                document.getElementById('stop-btn')?.addEventListener('click', () => this.stopGeneration());
+                document.getElementById('voice-btn')?.addEventListener('click', () => this.toggleVoiceInput());
+
+                // File Upload (Images Only)
+                document.getElementById('file-attachment')?.addEventListener('change', (e) => this.handleFileUpload(e));
+
+                // Logo focus composer
+                document.getElementById('logo-focus-trigger')?.addEventListener('click', () => this.focusComposer());
+
+                // Settings modal listeners
+                document.getElementById('close-settings-btn')?.addEventListener('click', () => this.closeSettings());
+                document.getElementById('close-settings-bottom-btn')?.addEventListener('click', () => this.closeSettings());
+                document.getElementById('btn-save-key')?.addEventListener('click', () => this.saveApiKey());
+                document.getElementById('btn-remove-key')?.addEventListener('click', () => this.removeApiKey());
+                document.getElementById('btn-test-key')?.addEventListener('click', () => this.testApiConnection());
+                document.getElementById('btn-toggle-key-visibility')?.addEventListener('click', () => this.toggleKeyVisibility());
+
+                // Suggestion Cards
+                document.querySelectorAll('.prompt-card').forEach(card => {
+                    card.addEventListener('click', (e) => {
+                        const promptText = e.currentTarget.getAttribute('data-prompt');
+                        if (promptText) this.usePrompt(promptText);
+                    });
+                });
+            }
+
+            startNewChat() {
+                if (this.isGenerating) {
+                    this.stopGeneration();
+                }
+                this.currentMessages = [];
+                this.clearAttachment();
+                
+                const input = document.getElementById('message-input');
+                if (input) {
+                    input.value = '';
+                    input.style.height = 'auto';
+                }
+
+                document.getElementById('welcome-screen').classList.remove('hidden');
+                document.getElementById('messages-list').classList.add('hidden');
+                document.getElementById('messages-list').innerHTML = '';
+            }
+
+            usePrompt(text) {
+                const input = document.getElementById('message-input');
+                input.value = text;
+                input.focus();
+                this.sendMessage();
+            }
+
+            focusComposer() {
+                document.getElementById('message-input').focus();
+            }
+
+            async sendMessage() {
+                if (this.isGenerating) return;
+
+                const input = document.getElementById('message-input');
+                const text = input.value.trim();
+                if (!text && !this.pendingFile) return;
+
+                if (!this.apiKey) {
+                    alert('Please configure your Gemini API key in settings first.');
+                    this.openSettings();
+                    return;
+                }
+
+                const userMsg = {
+                    id: 'msg_' + Date.now(),
+                    role: 'user',
+                    content: text,
+                    attachment: this.pendingFile ? { ...this.pendingFile } : null,
+                    timestamp: Date.now()
+                };
+
+                this.currentMessages.push(userMsg);
+
+                input.value = '';
+                input.style.height = 'auto';
+                this.clearAttachment();
+
+                document.getElementById('welcome-screen').classList.add('hidden');
+                document.getElementById('messages-list').classList.remove('hidden');
+
+                this.renderMessages();
+                await this.executeGeminiRequest();
+            }
+
+            async executeGeminiRequest() {
+                this.isGenerating = true;
+                this.updateSendButtons(true);
+
+                const assistantMsg = {
+                    id: 'msg_' + (Date.now() + 1),
+                    role: 'assistant',
+                    content: '',
+                    timestamp: Date.now(),
+                    pending: true
+                };
+
+                this.currentMessages.push(assistantMsg);
+                this.renderMessages();
+
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${this.currentModel}:generateContent?key=${this.apiKey}`;
+
+                const contents = this.currentMessages
+                    .filter(m => !m.pending)
+                    .map(m => {
+                        const parts = [];
+                        if (m.attachment && m.attachment.data) {
+                            parts.push({
+                                inlineData: {
+                                    mimeType: m.attachment.mimeType,
+                                    data: m.attachment.data.split(',')[1] || m.attachment.data
+                                }
+                            });
+                        }
+                        if (m.content) {
+                            parts.push({ text: m.content });
+                        }
+                        return {
+                            role: m.role === 'assistant' ? 'model' : 'user',
+                            parts: parts
+                        };
+                    });
+
+                const payload = {
+                    contents: contents,
+                    systemInstruction: {
+                        parts: [{ text: this.systemInstruction }]
+                    }
+                };
+
+                this.abortController = new AbortController();
+
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload),
+                        signal: this.abortController.signal
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.error?.message || `API Error ${response.status}`);
+                    }
+
+                    const result = await response.json();
+                    const generatedText = result.candidates?.[0]?.content?.parts?.[0]?.text || "No response received.";
+
+                    assistantMsg.content = generatedText;
+                    assistantMsg.pending = false;
+                } catch (err) {
+                    if (err.name === 'AbortError') {
+                        assistantMsg.content += '\n\n*[Generation stopped by user]*';
+                    } else {
+                        assistantMsg.content = `⚠️ **Error**: ${err.message || 'Failed to communicate with API'}`;
+                        assistantMsg.error = true;
+                    }
+                    assistantMsg.pending = false;
+                } finally {
+                    this.isGenerating = false;
+                    this.abortController = null;
+                    this.updateSendButtons(false);
+                    this.renderMessages();
+                }
+            }
+
+            stopGeneration() {
+                if (this.abortController) {
+                    this.abortController.abort();
+                }
+            }
+
+            updateSendButtons(generating) {
+                const stopBtn = document.getElementById('stop-btn');
+                if (generating) {
+                    stopBtn.classList.remove('hidden');
+                } else {
+                    stopBtn.classList.add('hidden');
+                }
+            }
+
+            renderMessages() {
+                const container = document.getElementById('messages-list');
+                container.innerHTML = '';
+
+                this.currentMessages.forEach((msg, idx) => {
+                    const msgEl = document.createElement('div');
+                    msgEl.className = 'flex gap-4 justify-start';
+
+                    if (msg.role === 'user') {
+                        msgEl.innerHTML = `
+                            <div class="max-w-[85%] sm:max-w-[75%] space-y-1 ml-auto">
+                                <div class="bg-brand-surface border border-brand-border text-brand-text px-4 py-3 rounded-2xl rounded-tr-none text-sm leading-relaxed">
+                                    ${msg.attachment ? `<div class="text-xs text-brand-bright font-mono bg-brand-black p-1.5 rounded mb-2 border border-brand-border">📎 ${this.escapeHtml(msg.attachment.name)}</div>` : ''}
+                                    ${this.escapeHtml(msg.content)}
+                                </div>
+                                <div class="text-[10px] text-brand-muted text-right flex justify-end space-x-2">
+                                    <span>${new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                                    <button data-action="edit-msg" data-idx="${idx}" class="hover:text-brand-bright">Edit</button>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        const parsedContent = msg.pending 
+                            ? '<div class="flex items-center space-x-2 text-brand-muted"><span class="animate-pulse">Thinking...</span></div>' 
+                            : marked.parse(msg.content);
+
+                        const isRTL = this.isArabicOrRTL(msg.content);
+                        const textDir = isRTL ? 'rtl' : 'ltr';
+
+                        msgEl.innerHTML = `
+                            <div class="flex gap-3 max-w-full w-full">
+                                <div class="w-7 h-7 rounded-lg bg-brand-primary/10 border border-brand-primary/30 flex items-center justify-center flex-shrink-0 text-brand-bright mt-1">
+                                    <svg class="w-4 h-4" viewBox="0 0 100 100" fill="none"><circle cx="50" cy="50" r="40" fill="#A855F7"/></svg>
+                                </div>
+                                <div class="flex-1 min-w-0 space-y-2">
+                                    <div class="prose prose-invert text-sm max-w-none leading-relaxed text-brand-text message-body" dir="${textDir}">
+                                        ${parsedContent}
+                                    </div>
+                                    ${!msg.pending ? `
+                                        <div class="flex items-center space-x-3 text-xs text-brand-muted pt-1">
+                                            <button data-action="copy-msg" data-idx="${idx}" class="hover:text-brand-bright flex items-center gap-1"><i data-lucide="copy" class="w-3.5 h-3.5"></i> Copy</button>
+                                            <button data-action="regen-msg" class="hover:text-brand-bright flex items-center gap-1"><i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Regenerate</button>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        `;
+                    }
+
+                    // Attach message level event listeners
+                    msgEl.querySelectorAll('[data-action]').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const action = btn.getAttribute('data-action');
+                            if (action === 'edit-msg') this.editUserMessage(idx);
+                            if (action === 'copy-msg') this.copyToClipboard(this.currentMessages[idx].content);
+                            if (action === 'regen-msg') this.regenerateResponse();
+                        });
+                    });
+
+                    container.appendChild(msgEl);
+                });
+
+                // Auto-render KaTeX Math / Chemistry Formulas
+                if (window.renderMathInElement) {
+                    renderMathInElement(container, {
+                        delimiters: [
+                            {left: '$$', right: '$$', display: true},
+                            {left: '$', right: '$', display: false},
+                            {left: '\\(', right: '\\)', display: false},
+                            {left: '\\[', right: '\\]', display: true}
+                        ],
+                        throwOnError: false
+                    });
+                }
+
+                lucide.createIcons();
+                this.scrollToBottom();
+            }
+
+            scrollToBottom() {
+                const workspace = document.getElementById('chat-workspace');
+                workspace.scrollTop = workspace.scrollHeight;
+            }
+
+            editUserMessage(idx) {
+                const msg = this.currentMessages[idx];
+                const updated = prompt('Edit message:', msg.content);
+                if (updated && updated.trim()) {
+                    this.currentMessages = this.currentMessages.slice(0, idx);
+                    document.getElementById('message-input').value = updated;
+                    this.sendMessage();
+                }
+            }
+
+            regenerateResponse() {
+                if (this.currentMessages.length < 2) return;
+                if (this.currentMessages[this.currentMessages.length - 1].role === 'assistant') {
+                    this.currentMessages.pop();
+                }
+                this.executeGeminiRequest();
+            }
+
+            handleFileUpload(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    this.pendingFile = {
+                        name: file.name,
+                        mimeType: file.type || 'text/plain',
+                        data: e.target.result
+                    };
+                    this.renderAttachmentChip();
+                };
+
+                if (file.type.startsWith('image/')) {
+                    reader.readAsDataURL(file);
+                } else {
+                    reader.readAsText(file);
+                }
+            }
+
+            renderAttachmentChip() {
+                const preview = document.getElementById('attachment-preview');
+                if (!this.pendingFile) {
+                    preview.classList.add('hidden');
+                    preview.innerHTML = '';
+                    return;
+                }
+                preview.classList.remove('hidden');
+                preview.innerHTML = `
+                    <div class="inline-flex items-center space-x-2 bg-brand-surfaceLight border border-brand-border px-3 py-1.5 rounded-lg text-xs text-brand-bright">
+                        <i data-lucide="image" class="w-3.5 h-3.5"></i>
+                        <span class="truncate max-w-xs">${this.escapeHtml(this.pendingFile.name)}</span>
+                        <button id="btn-remove-attachment" class="hover:text-red-400 p-0.5"><i data-lucide="x" class="w-3 h-3"></i></button>
+                    </div>
+                `;
+                document.getElementById('btn-remove-attachment')?.addEventListener('click', () => this.clearAttachment());
+                lucide.createIcons();
+            }
+
+            clearAttachment() {
+                this.pendingFile = null;
+                const fileInput = document.getElementById('file-attachment');
+                if (fileInput) fileInput.value = '';
+                this.renderAttachmentChip();
+            }
+
+            handleFileUpload(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                if (!file.type.startsWith('image/')) {
+                    alert('Please select an image file only.');
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    this.pendingFile = {
+                        name: file.name,
+                        mimeType: file.type,
+                        data: e.target.result
+                    };
+                    this.renderAttachmentChip();
+                };
+                reader.readAsDataURL(file);
+            }
+
+            initSpeechRecognition() {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                if (SpeechRecognition) {
+                    this.recognition = new SpeechRecognition();
+                    this.recognition.continuous = false;
+                    this.recognition.interimResults = false;
+                    this.recognition.onresult = (event) => {
+                        const transcript = event.results[0][0].transcript;
+                        const input = document.getElementById('message-input');
+                        input.value += (input.value ? ' ' : '') + transcript;
+                        document.getElementById('voice-btn')?.classList.remove('animate-pulse-purple', 'text-brand-bright');
+                    };
+                    this.recognition.onerror = () => {
+                        document.getElementById('voice-btn')?.classList.remove('animate-pulse-purple', 'text-brand-bright');
+                    };
+                }
+            }
+
+            toggleVoiceInput() {
+                if (!this.recognition) {
+                    alert('Speech recognition is not supported in your browser.');
+                    return;
+                }
+                const btn = document.getElementById('voice-btn');
+                btn.classList.add('animate-pulse-purple', 'text-brand-bright');
+                this.recognition.start();
+            }
+
+            openSettings() {
+                document.getElementById('settings-modal').classList.remove('hidden');
+                document.getElementById('api-key-input').value = this.apiKey;
+            }
+
+            closeSettings() {
+                document.getElementById('settings-modal').classList.add('hidden');
+            }
+
+            saveApiKey() {
+                const key = document.getElementById('api-key-input').value.trim();
+                this.apiKey = key;
+                localStorage.setItem('younova_gemini_key', key);
+
+                this.updateKeyStatusUI();
+                alert('API key saved successfully.');
+                this.closeSettings();
+            }
+
+            removeApiKey() {
+                if (confirm('Are you sure you want to remove your API key?')) {
+                    this.apiKey = '';
+                    localStorage.removeItem('younova_gemini_key');
+                    document.getElementById('api-key-input').value = '';
+                    this.updateKeyStatusUI();
+                }
+            }
+
+            async testApiConnection() {
+                const key = document.getElementById('api-key-input').value.trim() || this.apiKey;
+                const resultBox = document.getElementById('api-test-result');
+                resultBox.classList.remove('hidden', 'bg-green-950/40', 'border-green-800', 'text-green-300', 'bg-red-950/40', 'border-red-800', 'text-red-300');
+                resultBox.innerText = 'Testing connection...';
+
+                try {
+                    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${key}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ contents: [{ parts: [{ text: 'ping' }] }] })
+                    });
+
+                    if (res.ok) {
+                        resultBox.classList.add('bg-green-950/40', 'border-green-800', 'text-green-300');
+                        resultBox.innerText = '✓ Connection successful! Gemini API is working.';
+                    } else {
+                        const err = await res.json();
+                        throw new Error(err.error?.message || 'Connection failed');
+                    }
+                } catch (e) {
+                    resultBox.classList.add('bg-red-950/40', 'border-red-800', 'text-red-300');
+                    resultBox.innerText = `✕ ${e.message}`;
+                }
+            }
+
+            updateKeyStatusUI() {
+                const label = document.getElementById('key-status-label');
+                const keyStatusText = document.getElementById('key-status-text');
+
+                if (this.apiKey) {
+                    if (label) {
+                        label.innerText = 'Connected';
+                        label.className = 'text-[11px] text-green-400';
+                    }
+                    if (keyStatusText) keyStatusText.innerText = 'Key Set';
+                } else {
+                    if (label) {
+                        label.innerText = 'Not Configured';
+                        label.className = 'text-[11px] text-yellow-500';
+                    }
+                    if (keyStatusText) keyStatusText.innerText = 'API Key';
+                }
+            }
+
+            toggleKeyVisibility() {
+                const input = document.getElementById('api-key-input');
+                input.type = input.type === 'password' ? 'text' : 'password';
+            }
+
+            isArabicOrRTL(text) {
+                if (!text) return false;
+                const rtlPattern = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF]/;
+                return rtlPattern.test(text);
+            }
+
+            escapeHtml(str) {
+                if (!str) return '';
+                return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+            }
+        }
+
+        // Initialize App on DOM Content Loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            window.younova = new YounovaApp();
+        });
+    </script>
+</body>
+</html>
