@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en" class="dark h-full">
 <head>
@@ -353,12 +352,19 @@
                 this.apiKey = localStorage.getItem('younova_gemini_key') || defaultApiKey;
                 this.currentModel = 'gemini-3-flash-preview';
                 this.currentMessages = [];
-                this.systemInstruction = `You are YOUNESS, an advanced artificial intelligence model developed by the YOUNESS team.
-                
-CRITICAL RULES:
-1. Always respond in the EXACT language used by the user in their prompt (e.g. if asked in Arabic, respond in Arabic; if in French, respond in French, etc.).
-2. Identity: If asked about your identity or who created/developed you, state clearly that you are an advanced AI model developed by the YOUNESS team ("نموذج ذكاء اصطناعي متطور بواسطة فريق YOUNESS").
-3. Math, Physics & Chemistry Formulas: When asked math, physics, or chemistry questions, write formulas and symbols cleanly using LaTeX syntax (e.g., $E = mc^2$, $a^2 + b^2 = c^2$, or block math with $$...$$) so KaTeX can render them directly.`;
+                this.systemInstruction = `You are YOUNOVA, an advanced language model developed by the YOUNESS team (نموذج لغوي متطور تم إنشاؤه من طرف فريق عمل YOUNESS).
+
+CRITICAL SYSTEM DIRECTIVES:
+1. IDENTITY & SELF-INTRODUCTION:
+   - Your name is YOUNOVA. You were created and developed by the YOUNESS team (فريق عمل YOUNESS).
+   - DO NOT introduce yourself or mention your name/creator at the beginning or end of standard responses unless the user explicitly asks about your identity, who created you, or who you are (e.g., "من أنت؟", "Who are you?", "من طورك؟").
+   - When explicitly asked about your identity or origin, respond clearly and politely in the user's language stating that you are YOUNOVA, an advanced AI language model developed by the YOUNESS team.
+
+2. LANGUAGE MATCHING:
+   - Always respond in the EXACT language used by the user in their prompt (e.g., Arabic, English, French, etc.).
+
+3. MATH, PHYSICS & CHEMISTRY FORMULAS:
+   - When answering math, physics, or chemistry questions, format all equations, formulas, and symbols cleanly using LaTeX syntax (e.g., $E = mc^2$, $a^2 + b^2 = c^2$, or block math with $$...$$) so KaTeX renders them smoothly.`;
                 
                 this.pendingFile = null;
                 this.abortController = null;
@@ -627,9 +633,8 @@ CRITICAL RULES:
                                     ${msg.attachment ? `<div class="text-xs text-brand-bright font-mono bg-brand-black p-1.5 rounded mb-2 border border-brand-border">📎 ${this.escapeHtml(msg.attachment.name)}</div>` : ''}
                                     ${this.escapeHtml(msg.content)}
                                 </div>
-                                <div class="text-[10px] text-brand-muted text-right flex justify-end space-x-2">
+                                <div class="text-[10px] text-brand-muted text-right">
                                     <span>${new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
-                                    <button data-action="edit-msg" data-idx="${idx}" class="hover:text-brand-bright">Edit</button>
                                 </div>
                             </div>
                         `;
@@ -665,7 +670,6 @@ CRITICAL RULES:
                     msgEl.querySelectorAll('[data-action]').forEach(btn => {
                         btn.addEventListener('click', () => {
                             const action = btn.getAttribute('data-action');
-                            if (action === 'edit-msg') this.editUserMessage(idx);
                             if (action === 'copy-msg') this.copyToClipboard(this.currentMessages[idx].content);
                             if (action === 'regen-msg') this.regenerateResponse();
                         });
@@ -696,14 +700,36 @@ CRITICAL RULES:
                 workspace.scrollTop = workspace.scrollHeight;
             }
 
-            editUserMessage(idx) {
-                const msg = this.currentMessages[idx];
-                const updated = prompt('Edit message:', msg.content);
-                if (updated && updated.trim()) {
-                    this.currentMessages = this.currentMessages.slice(0, idx);
-                    document.getElementById('message-input').value = updated;
-                    this.sendMessage();
+            copyToClipboard(text) {
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(text).then(() => {
+                        alert('Copied to clipboard!');
+                    }).catch(() => {
+                        this.fallbackCopyText(text);
+                    });
+                } else {
+                    this.fallbackCopyText(text);
                 }
+            }
+
+            fallbackCopyText(text) {
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                textarea.style.position = 'fixed';  // Avoid scrolling to bottom
+                document.body.appendChild(textarea);
+                textarea.focus();
+                textarea.select();
+                try {
+                    const successful = document.execCommand('copy');
+                    if (successful) {
+                        alert('Copied to clipboard!');
+                    } else {
+                        alert('Failed to copy text.');
+                    }
+                } catch (err) {
+                    alert('Failed to copy text.');
+                }
+                document.body.removeChild(textarea);
             }
 
             regenerateResponse() {
