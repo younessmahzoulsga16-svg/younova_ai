@@ -13,20 +13,27 @@
                 extend: {
                     colors: {
                         brand: {
-                            black: '#000000',
-                            surface: '#0A0A0A',
-                            surfaceLight: '#141414',
-                            border: '#242027',
-                            primary: '#A855F7',
-                            bright: '#C084FC',
-                            deep: '#7E22CE',
-                            text: '#F5F3F7',
-                            muted: '#A1A1AA'
+                            black: '#03020B',       /* Deep Cosmic Midnight Navy-Black */
+                            surface: '#0A091E',     /* Glass Card Deep Indigo */
+                            surfaceLight: '#131133',/* Elevated Cosmic Surface */
+                            border: 'rgba(108, 75, 255, 0.22)', /* Glowing Indigo Border */
+                            primary: '#5E3BEE',     /* Electric Cosmic Violet-Blue */
+                            bright: '#9E82FF',      /* Neon Lavender Glow */
+                            deep: '#3B21A8',        /* Deep Royal Indigo */
+                            text: '#F8F9FA',        /* Crisp Starlight White */
+                            muted: '#9493B8'        /* Cool Nebular Slate */
                         }
                     },
                     boxShadow: {
-                        'glow-purple': '0 0 25px rgba(168, 85, 247, 0.25)',
-                        'glow-purple-sm': '0 0 12px rgba(168, 85, 247, 0.18)'
+                        'glow-purple': '0 0 35px rgba(94, 59, 238, 0.35)',
+                        'glow-purple-sm': '0 0 18px rgba(94, 59, 238, 0.25)',
+                        'glow-arc': '0 -12px 45px -5px rgba(124, 92, 255, 0.55)',
+                        'card-glass': '0 8px 32px 0 rgba(3, 2, 11, 0.65)'
+                    },
+                    backgroundImage: {
+                        'cosmic-gradient': 'linear-gradient(135deg, #5E3BEE 0%, #8B5CF6 100%)',
+                        'cosmic-gradient-hover': 'linear-gradient(135deg, #704DF5 0%, #9F7AEA 100%)',
+                        'nebula-radial': 'radial-gradient(circle at 50% 0%, rgba(94, 59, 238, 0.28) 0%, rgba(15, 12, 41, 0.05) 55%, transparent 80%)'
                     }
                 }
             }
@@ -55,10 +62,80 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #000000;
-            color: #F5F3F7;
+            background-color: #03020B;
+            color: #F8F9FA;
             overflow: hidden;
         }
+
+        /* Cosmic Architectural Grid Background inspired by reference */
+        .cosmic-grid-bg {
+            background-color: #03020B;
+            background-image: 
+                radial-gradient(ellipse 80% 50% at 50% -10%, rgba(94, 59, 238, 0.25), transparent),
+                radial-gradient(ellipse 60% 40% at 85% 90%, rgba(139, 92, 246, 0.12), transparent),
+                linear-gradient(to right, rgba(94, 59, 238, 0.06) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(94, 59, 238, 0.06) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 44px 44px, 44px 44px;
+        }
+
+        /* Glowing Cosmic Horizon Ring behind Hero Logo */
+        .cosmic-horizon-arc {
+            position: relative;
+        }
+        .cosmic-horizon-arc::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 148px;
+            height: 148px;
+            border-radius: 50%;
+            border: 1.5px solid rgba(158, 130, 255, 0.45);
+            border-top: 2.5px solid rgba(196, 181, 253, 0.95);
+            border-bottom: 1.5px solid rgba(94, 59, 238, 0.35);
+            background: radial-gradient(circle, rgba(94, 59, 238, 0.14) 0%, transparent 70%);
+            box-shadow: 0 0 38px rgba(94, 59, 238, 0.55), inset 0 0 24px rgba(158, 130, 255, 0.3);
+            pointer-events: none;
+            z-index: 0;
+        }
+        .cosmic-horizon-arc::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 186px;
+            height: 186px;
+            border-radius: 50%;
+            border: 1px dashed rgba(158, 130, 255, 0.22);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Glassmorphic Card Styling */
+        .glass-card {
+            background: linear-gradient(180deg, rgba(16, 14, 43, 0.72) 0%, rgba(9, 8, 28, 0.85) 100%);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(114, 89, 255, 0.2);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        .glass-card:hover {
+            background: linear-gradient(180deg, rgba(25, 21, 66, 0.85) 0%, rgba(13, 11, 38, 0.92) 100%);
+            border-color: rgba(158, 130, 255, 0.55);
+            box-shadow: 0 0 28px rgba(94, 59, 238, 0.28);
+            transform: translateY(-2px);
+        }
+
+        /* Glass Header & Composer */
+        .glass-bar {
+            background: rgba(5, 4, 18, 0.78);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
         pre code {
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.875rem;
@@ -83,30 +160,31 @@
         }
         /* Custom Scrollbars */
         ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
+            width: 5px;
+            height: 5px;
         }
         ::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.2);
+            background: rgba(3, 2, 11, 0.4);
         }
         ::-webkit-scrollbar-thumb {
-            background: #242027;
-            border-radius: 4px;
+            background: rgba(94, 59, 238, 0.35);
+            border-radius: 6px;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: #7E22CE;
+            background: rgba(158, 130, 255, 0.65);
         }
         .prose pre {
-            background-color: #0d0d0e !important;
-            border: 1px solid #242027;
-            border-radius: 0.5rem;
+            background-color: #060514 !important;
+            border: 1px solid rgba(114, 89, 255, 0.25);
+            border-radius: 0.75rem;
             padding: 0;
             margin-top: 0.5rem;
             margin-bottom: 0.5rem;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
         }
         .prose p {
             margin-bottom: 0.75rem;
-            line-height: 1.625;
+            line-height: 1.65;
         }
         .prose ul, .prose ol {
             padding-left: 1.25rem;
@@ -118,59 +196,84 @@
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 1rem;
+            border-radius: 0.5rem;
+            overflow: hidden;
         }
         .prose th, .prose td {
-            border: 1px solid #242027;
+            border: 1px solid rgba(114, 89, 255, 0.22);
             padding: 0.5rem 0.75rem;
             text-align: left;
         }
-        .prose th { background-color: #141414; }
+        .prose th { background-color: rgba(20, 17, 54, 0.8); }
         @keyframes pulse-purple {
             0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.1); opacity: 0.7; }
+            50% { transform: scale(1.12); opacity: 0.75; }
         }
         .animate-pulse-purple {
             animation: pulse-purple 1.5s infinite ease-in-out;
         }
+        /* Subtle Custom Toast Notification (replaces harsh alerts) */
+        @keyframes slideUpFade {
+            from { opacity: 0; transform: translate(-50%, 12px); }
+            to { opacity: 1; transform: translate(-50%, 0); }
+        }
+        .toast-notification {
+            animation: slideUpFade 0.25s ease-out forwards;
+        }
     </style>
 </head>
-<body class="h-full flex flex-col bg-brand-black text-brand-text">
+<body class="h-full flex flex-col cosmic-grid-bg text-brand-text selection:bg-brand-primary selection:text-white">
 
     <!-- App Container -->
     <div id="app" class="flex h-full w-full relative overflow-hidden">
 
+        <!-- Ambient Radial Light Orbs (Inspired by Reference UI) -->
+        <div class="pointer-events-none fixed top-[-120px] left-1/2 -translate-x-1/2 w-[540px] h-[260px] rounded-full bg-brand-primary/20 blur-[110px] z-0"></div>
+        <div class="pointer-events-none fixed bottom-[-100px] right-[-80px] w-[380px] h-[380px] rounded-full bg-brand-deep/20 blur-[120px] z-0"></div>
+
         <!-- MAIN WORKSPACE -->
-        <main class="flex-1 flex flex-col h-full bg-brand-black relative min-w-0">
+        <main class="flex-1 flex flex-col h-full relative min-w-0 z-10">
             <!-- Header Bar -->
-            <header class="h-14 border-b border-brand-border px-4 sm:px-6 flex items-center justify-between bg-brand-black/80 backdrop-blur z-20">
+            <header class="h-16 border-b border-brand-border px-4 sm:px-8 flex items-center justify-between glass-bar z-20">
                 <div class="flex items-center space-x-3">
-                    <div class="flex items-center space-x-3 cursor-pointer" id="logo-btn">
-                        <svg class="w-7 h-7 text-brand-primary filter drop-shadow-[0_0_8px_rgba(168,85,247,0.5)]" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <ellipse cx="50" cy="50" rx="42" ry="14" stroke="currentColor" stroke-width="4.5" transform="rotate(0 50 50)" />
-                            <ellipse cx="50" cy="50" rx="42" ry="14" stroke="currentColor" stroke-width="4.5" transform="rotate(60 50 50)" />
-                            <ellipse cx="50" cy="50" rx="42" ry="14" stroke="currentColor" stroke-width="4.5" transform="rotate(120 50 50)" />
-                            <circle cx="50" cy="50" r="9" fill="#C084FC" />
-                        </svg>
-                        <span class="font-bold text-lg tracking-wider text-brand-text">YOUNOVA</span>
+                    <div class="flex items-center space-x-3 cursor-pointer group" id="logo-btn">
+                        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-primary/25 to-brand-deep/30 border border-brand-primary/40 flex items-center justify-center shadow-glow-purple-sm group-hover:border-brand-bright transition">
+                            <svg class="w-5 h-5 text-brand-bright filter drop-shadow-[0_0_8px_rgba(158,130,255,0.7)]" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <ellipse cx="50" cy="50" rx="42" ry="14" stroke="currentColor" stroke-width="5" transform="rotate(0 50 50)" />
+                                <ellipse cx="50" cy="50" rx="42" ry="14" stroke="currentColor" stroke-width="5" transform="rotate(60 50 50)" />
+                                <ellipse cx="50" cy="50" rx="42" ry="14" stroke="currentColor" stroke-width="5" transform="rotate(120 50 50)" />
+                                <circle cx="50" cy="50" r="10" fill="#FFFFFF" />
+                            </svg>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="font-bold text-base sm:text-lg tracking-widest text-white leading-none">YOUNOVA</span>
+                            <span class="text-[9px] tracking-[0.22em] text-brand-bright uppercase mt-0.5 font-medium">Intelligence</span>
+                        </div>
                     </div>
                 </div>
 
                 <div class="flex items-center space-x-3 relative">
+                    <!-- Status Pill (Desktop) -->
+                    <div class="hidden md:flex items-center gap-2 px-3 py-1 rounded-full bg-brand-surface/80 border border-brand-border text-[11px] text-brand-muted">
+                        <span class="w-1.5 h-1.5 rounded-full bg-brand-bright shadow-[0_0_8px_#9E82FF]"></span>
+                        <span>Neural Engine Active</span>
+                    </div>
+
                     <!-- Top Right Menu Dropdown -->
                     <div class="relative">
-                        <button id="menu-toggle-btn" class="p-2 rounded-xl text-brand-muted hover:text-brand-bright hover:bg-brand-surfaceLight border border-brand-border transition flex items-center gap-2">
+                        <button id="menu-toggle-btn" class="px-3.5 py-2 rounded-full text-white bg-cosmic-gradient hover:bg-cosmic-gradient-hover shadow-glow-purple-sm transition flex items-center gap-2 text-xs font-medium">
                             <i data-lucide="menu" class="w-4 h-4"></i>
-                            <span class="text-xs font-medium hidden sm:inline">Menu</span>
+                            <span class="hidden sm:inline">Menu</span>
                         </button>
                         
                         <!-- Dropdown Menu Box -->
-                        <div id="menu-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-brand-surface border border-brand-border rounded-xl shadow-glow-purple-sm py-1.5 z-50">
-                            <button id="menu-new-chat" class="w-full text-left px-4 py-2.5 text-xs text-brand-text hover:bg-brand-surfaceLight flex items-center gap-2.5 transition">
-                                <i data-lucide="plus-circle" class="w-4 h-4 text-brand-primary"></i>
-                                <span>New Chat</span>
+                        <div id="menu-dropdown" class="hidden absolute right-0 mt-2.5 w-52 bg-[#0C0B24]/95 backdrop-blur-xl border border-brand-border rounded-2xl shadow-glow-purple py-1.5 z-50 overflow-hidden">
+                            <button id="menu-new-chat" class="w-full text-left px-4 py-2.5 text-xs text-brand-text hover:bg-brand-primary/20 flex items-center gap-2.5 transition">
+                                <i data-lucide="plus-circle" class="w-4 h-4 text-brand-bright"></i>
+                                <span>New Conversation</span>
                             </button>
-                            <button id="menu-settings" class="w-full text-left px-4 py-2.5 text-xs text-brand-text hover:bg-brand-surfaceLight flex items-center gap-2.5 transition border-t border-brand-border">
-                                <i data-lucide="settings" class="w-4 h-4 text-brand-primary"></i>
+                            <button id="menu-settings" class="w-full text-left px-4 py-2.5 text-xs text-brand-text hover:bg-brand-primary/20 flex items-center gap-2.5 transition border-t border-brand-border">
+                                <i data-lucide="settings" class="w-4 h-4 text-brand-bright"></i>
                                 <span>API Settings</span>
                             </button>
                         </div>
@@ -180,54 +283,88 @@
 
             <!-- Chat Content Workspace -->
             <div id="chat-workspace" class="flex-1 overflow-y-auto relative p-4 md:p-6 space-y-6">
-                <!-- Welcome View -->
-                <div id="welcome-screen" class="h-full flex flex-col items-center justify-center max-w-2xl mx-auto text-center px-4 py-8 space-y-6">
-                    <div class="relative group cursor-pointer" id="logo-focus-trigger">
-                        <div class="absolute -inset-1 bg-gradient-to-r from-brand-primary to-brand-bright rounded-full blur opacity-25 group-hover:opacity-60 transition duration-500"></div>
-                        <svg class="w-20 h-20 text-brand-primary relative" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <ellipse cx="50" cy="50" rx="42" ry="14" stroke="currentColor" stroke-width="4" transform="rotate(0 50 50)" />
-                            <ellipse cx="50" cy="50" rx="42" ry="14" stroke="currentColor" stroke-width="4" transform="rotate(60 50 50)" />
-                            <ellipse cx="50" cy="50" rx="42" ry="14" stroke="currentColor" stroke-width="4" transform="rotate(120 50 50)" />
-                            <circle cx="50" cy="50" r="10" fill="#C084FC" />
-                        </svg>
+                <!-- Welcome View (Hero Section inspired by Reference Arc & Cards) -->
+                <div id="welcome-screen" class="min-h-full flex flex-col items-center justify-center max-w-3xl mx-auto text-center px-4 py-6 space-y-7">
+                    
+                    <!-- Glowing Horizon Arc & Emblem -->
+                    <div class="relative group cursor-pointer my-6 cosmic-horizon-arc" id="logo-focus-trigger">
+                        <div class="absolute inset-0 bg-brand-primary/30 rounded-full blur-2xl opacity-60 group-hover:opacity-90 transition duration-500"></div>
+                        <div class="relative w-20 h-20 mx-auto rounded-2xl bg-gradient-to-b from-[#17143D] to-[#08071A] border border-brand-bright/40 flex items-center justify-center shadow-glow-purple">
+                            <svg class="w-12 h-12 text-brand-bright filter drop-shadow-[0_0_12px_rgba(158,130,255,0.8)]" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <ellipse cx="50" cy="50" rx="42" ry="14" stroke="currentColor" stroke-width="4.5" transform="rotate(0 50 50)" />
+                                <ellipse cx="50" cy="50" rx="42" ry="14" stroke="currentColor" stroke-width="4.5" transform="rotate(60 50 50)" />
+                                <ellipse cx="50" cy="50" rx="42" ry="14" stroke="currentColor" stroke-width="4.5" transform="rotate(120 50 50)" />
+                                <circle cx="50" cy="50" r="10" fill="#FFFFFF" />
+                            </svg>
+                        </div>
                     </div>
-                    <div>
-                        <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-brand-text mb-2">How can I help you today?</h1>
-                        <p class="text-sm text-brand-muted">Ask anything, solve equations, write code, or create new ideas.</p>
+
+                    <!-- Hero Title & Subtitle -->
+                    <div class="space-y-2.5 max-w-xl">
+                        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-primary/15 border border-brand-primary/30 text-brand-bright text-[11px] font-medium tracking-wide mb-1">
+                            <i data-lucide="sparkles" class="w-3 h-3"></i>
+                            <span>Next-Generation AI Assistant</span>
+                        </div>
+                        <h1 class="text-2xl sm:text-4xl font-bold tracking-tight text-white">
+                            How can <span class="text-transparent bg-clip-text bg-gradient-to-r from-white via-brand-bright to-brand-primary">YOUNOVA</span> help you?
+                        </h1>
+                        <p class="text-xs sm:text-sm text-brand-muted leading-relaxed">
+                            Ask complex questions, solve advanced equations, generate clean code, or explore new universes of ideas.
+                        </p>
                     </div>
 
-                    <!-- Suggestion Cards Grid -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full mt-4 text-left">
-                        <button class="prompt-card p-3.5 rounded-xl border border-brand-border bg-brand-surface hover:bg-brand-surfaceLight hover:border-brand-primary/60 transition group" data-prompt="Solve Schrödinger's time-independent wave equation for a 1D particle in a box: -\frac{\hbar^2}{2m} \frac{d^2\psi}{dx^2} = E\psi">
-                            <div class="flex items-center space-x-2 text-brand-bright text-xs font-semibold mb-1">
-                                <i data-lucide="atom" class="w-4 h-4"></i>
-                                <span>Physics & Math</span>
+                    <!-- Suggestion Cards Grid (Glassmorphic Bento Grid inspired by reference) -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 w-full mt-2 text-left">
+                        <button class="prompt-card glass-card p-4 rounded-2xl group relative overflow-hidden" data-prompt="Solve Schrödinger's time-independent wave equation for a 1D particle in a box: -\frac{\hbar^2}{2m} \frac{d^2\psi}{dx^2} = E\psi">
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="flex items-center space-x-2.5">
+                                    <div class="w-7 h-7 rounded-lg bg-brand-primary/20 border border-brand-primary/35 flex items-center justify-center text-brand-bright">
+                                        <i data-lucide="atom" class="w-4 h-4"></i>
+                                    </div>
+                                    <span class="text-xs font-semibold text-white tracking-wide">Physics & Math</span>
+                                </div>
+                                <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 text-brand-muted group-hover:text-brand-bright transition"></i>
                             </div>
-                            <p class="text-xs text-brand-muted group-hover:text-brand-text transition line-clamp-2">Derive the wave function and energy levels for a particle in a box.</p>
+                            <p class="text-xs text-brand-muted group-hover:text-brand-text transition line-clamp-2 leading-relaxed">Derive the wave function and energy levels for a particle in a box.</p>
                         </button>
 
-                        <button class="prompt-card p-3.5 rounded-xl border border-brand-border bg-brand-surface hover:bg-brand-surfaceLight hover:border-brand-primary/60 transition group" data-prompt="Explain quantum entanglement and present key mathematical formulations in LaTeX.">
-                            <div class="flex items-center space-x-2 text-brand-bright text-xs font-semibold mb-1">
-                                <i data-lucide="brain" class="w-4 h-4"></i>
-                                <span>Quantum Concepts</span>
+                        <button class="prompt-card glass-card p-4 rounded-2xl group relative overflow-hidden" data-prompt="Explain quantum entanglement and present key mathematical formulations in LaTeX.">
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="flex items-center space-x-2.5">
+                                    <div class="w-7 h-7 rounded-lg bg-brand-primary/20 border border-brand-primary/35 flex items-center justify-center text-brand-bright">
+                                        <i data-lucide="brain" class="w-4 h-4"></i>
+                                    </div>
+                                    <span class="text-xs font-semibold text-white tracking-wide">Quantum Concepts</span>
+                                </div>
+                                <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 text-brand-muted group-hover:text-brand-bright transition"></i>
                             </div>
-                            <p class="text-xs text-brand-muted group-hover:text-brand-text transition line-clamp-2">Explain quantum entanglement with standard notation.</p>
+                            <p class="text-xs text-brand-muted group-hover:text-brand-text transition line-clamp-2 leading-relaxed">Explain quantum entanglement with standard mathematical notation.</p>
                         </button>
 
-                        <button class="prompt-card p-3.5 rounded-xl border border-brand-border bg-brand-surface hover:bg-brand-surfaceLight hover:border-brand-primary/60 transition group" data-prompt="Write a clean JavaScript function for debouncing API calls with full error handling.">
-                            <div class="flex items-center space-x-2 text-brand-bright text-xs font-semibold mb-1">
-                                <i data-lucide="code" class="w-4 h-4"></i>
-                                <span>Code Generation</span>
+                        <button class="prompt-card glass-card p-4 rounded-2xl group relative overflow-hidden" data-prompt="Write a clean JavaScript function for debouncing API calls with full error handling.">
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="flex items-center space-x-2.5">
+                                    <div class="w-7 h-7 rounded-lg bg-brand-primary/20 border border-brand-primary/35 flex items-center justify-center text-brand-bright">
+                                        <i data-lucide="code" class="w-4 h-4"></i>
+                                    </div>
+                                    <span class="text-xs font-semibold text-white tracking-wide">Code Generation</span>
+                                </div>
+                                <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 text-brand-muted group-hover:text-brand-bright transition"></i>
                             </div>
-                            <p class="text-xs text-brand-muted group-hover:text-brand-text transition line-clamp-2">Write a clean JavaScript Debounce function.</p>
+                            <p class="text-xs text-brand-muted group-hover:text-brand-text transition line-clamp-2 leading-relaxed">Write a clean JavaScript Debounce function with error handling.</p>
                         </button>
 
-                        <button class="prompt-card p-3.5 rounded-xl border border-brand-border bg-brand-surface hover:bg-brand-surfaceLight hover:border-brand-primary/60 transition group" data-prompt="Who created you and what is your identity?">
-                            <div class="flex items-center space-x-2 text-brand-bright text-xs font-semibold mb-1">
-                                <i data-lucide="sparkles" class="w-4 h-4"></i>
-                                <span>Identity</span>
+                        <button class="prompt-card glass-card p-4 rounded-2xl group relative overflow-hidden" data-prompt="Who created you and what is your identity?">
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="flex items-center space-x-2.5">
+                                    <div class="w-7 h-7 rounded-lg bg-brand-primary/20 border border-brand-primary/35 flex items-center justify-center text-brand-bright">
+                                        <i data-lucide="sparkles" class="w-4 h-4"></i>
+                                    </div>
+                                    <span class="text-xs font-semibold text-white tracking-wide">Origin & Identity</span>
+                                </div>
+                                <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 text-brand-muted group-hover:text-brand-bright transition"></i>
                             </div>
-                            <p class="text-xs text-brand-muted group-hover:text-brand-text transition line-clamp-2">Ask about YOUNOVA's origin and identity.</p>
+                            <p class="text-xs text-brand-muted group-hover:text-brand-text transition line-clamp-2 leading-relaxed">Ask about YOUNOVA's origin, architecture, and identity.</p>
                         </button>
                     </div>
                 </div>
@@ -239,18 +376,18 @@
             </div>
 
             <!-- COMPOSER -->
-            <div class="p-3 md:p-4 bg-brand-black/95 border-t border-brand-border">
+            <div class="p-3 md:p-5 glass-bar border-t border-brand-border z-20">
                 <div class="max-w-3xl mx-auto relative">
                     <!-- Attachment Preview Container -->
-                    <div id="attachment-preview" class="hidden mb-2 flex items-center gap-2 flex-wrap"></div>
+                    <div id="attachment-preview" class="hidden mb-2.5 flex items-center gap-2 flex-wrap"></div>
 
                     <!-- Input Box -->
-                    <div class="relative bg-brand-surface border border-brand-border focus-within:border-brand-primary rounded-2xl shadow-lg transition duration-200">
-                        <textarea id="message-input" rows="1" placeholder="Type your message to YOUNOVA..." class="w-full bg-transparent py-3.5 pl-11 pr-32 text-sm text-brand-text placeholder-brand-muted focus:outline-none resize-none max-h-48 overflow-y-auto block"></textarea>
+                    <div class="relative bg-[#0B0A22]/90 border border-brand-border focus-within:border-brand-bright focus-within:shadow-glow-purple-sm rounded-2xl shadow-card-glass transition duration-300">
+                        <textarea id="message-input" rows="1" placeholder="Type your message to YOUNOVA..." class="w-full bg-transparent py-3.5 pl-12 pr-32 text-sm text-white placeholder-brand-muted focus:outline-none resize-none max-h-48 overflow-y-auto block"></textarea>
 
                         <!-- Left Action (Image Attachment Button) -->
-                        <div class="absolute left-3 bottom-3 flex items-center">
-                            <label class="cursor-pointer text-brand-muted hover:text-brand-bright transition p-1 rounded-lg" title="Attach Image">
+                        <div class="absolute left-3.5 bottom-3 flex items-center">
+                            <label class="cursor-pointer text-brand-muted hover:text-brand-bright hover:bg-brand-primary/15 transition p-1.5 rounded-xl" title="Attach Image">
                                 <i data-lucide="image" class="w-4 h-4"></i>
                                 <input type="file" id="file-attachment" class="hidden" accept="image/*">
                             </label>
@@ -258,47 +395,52 @@
 
                         <!-- Right Actions (Voice, Stop & Send Button) -->
                         <div class="absolute right-3 bottom-2.5 flex items-center space-x-1.5">
-                            <button id="voice-btn" title="Voice Input" class="p-1.5 rounded-xl text-brand-muted hover:text-brand-bright hover:bg-brand-surfaceLight transition">
+                            <button id="voice-btn" title="Voice Input" class="p-2 rounded-xl text-brand-muted hover:text-brand-bright hover:bg-brand-primary/15 transition">
                                 <i data-lucide="mic" class="w-4 h-4"></i>
                             </button>
 
-                            <button id="stop-btn" class="hidden p-2 rounded-xl bg-red-600 hover:bg-red-500 text-white font-semibold transition" title="Stop Generation">
+                            <button id="stop-btn" class="hidden p-2 rounded-xl bg-red-600/90 hover:bg-red-500 text-white font-semibold transition shadow-lg" title="Stop Generation">
                                 <i data-lucide="square" class="w-4 h-4 fill-current"></i>
                             </button>
 
-                            <button id="send-btn" class="p-2 rounded-xl bg-brand-primary hover:bg-brand-bright text-black font-semibold transition flex items-center justify-center shadow-glow-purple-sm" title="Send Message">
+                            <button id="send-btn" class="p-2.5 rounded-xl bg-cosmic-gradient hover:bg-cosmic-gradient-hover text-white font-semibold transition flex items-center justify-center shadow-glow-purple-sm" title="Send Message">
                                 <i data-lucide="send" class="w-4 h-4"></i>
                             </button>
                         </div>
                     </div>
                     <div class="mt-2 flex items-center justify-between text-[11px] text-brand-muted px-2">
-                        <span>YOUNOVA may produce inaccurate info. Verify important information.</span>
-                        <span id="char-count">0 chars</span>
+                        <span>YOUNOVA may produce inaccurate info. Verify important facts.</span>
+                        <span id="char-count" class="font-mono text-brand-bright/80">0 chars</span>
                     </div>
                 </div>
             </div>
         </main>
     </div>
 
+    <!-- Custom Toast Notification Container -->
+    <div id="toast-container" class="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 pointer-events-none"></div>
+
     <!-- SETTINGS & API MODAL -->
-    <div id="settings-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
-        <div class="bg-brand-surface border border-brand-border w-full max-w-lg rounded-2xl shadow-glow-purple overflow-hidden flex flex-col">
-            <div class="p-4 border-b border-brand-border flex items-center justify-between">
-                <div class="flex items-center space-x-2">
-                    <i data-lucide="sliders" class="w-5 h-5 text-brand-primary"></i>
-                    <h2 class="text-base font-semibold text-brand-text">YOUNOVA Settings</h2>
+    <div id="settings-modal" class="fixed inset-0 z-50 bg-[#020108]/85 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="bg-[#0B0A22] border border-brand-border w-full max-w-lg rounded-3xl shadow-glow-purple overflow-hidden flex flex-col">
+            <div class="p-5 border-b border-brand-border flex items-center justify-between bg-gradient-to-r from-brand-primary/15 to-transparent">
+                <div class="flex items-center space-x-2.5">
+                    <div class="w-8 h-8 rounded-xl bg-brand-primary/20 border border-brand-primary/40 flex items-center justify-center text-brand-bright">
+                        <i data-lucide="sliders" class="w-4 h-4"></i>
+                    </div>
+                    <h2 class="text-base font-semibold text-white tracking-wide">YOUNOVA Settings</h2>
                 </div>
-                <button id="close-settings-btn" class="text-brand-muted hover:text-white p-1 rounded-lg">
+                <button id="close-settings-btn" class="text-brand-muted hover:text-white hover:bg-white/10 p-1.5 rounded-xl transition">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
 
             <!-- Content -->
             <div class="p-5 space-y-4 text-sm">
-                <div class="p-3.5 bg-brand-black rounded-xl border border-brand-border space-y-2">
+                <div class="p-4 bg-[#060516] rounded-2xl border border-brand-border space-y-2">
                     <div class="flex items-center justify-between">
                         <span class="text-xs font-semibold text-brand-bright">Provider: Google Gemini API</span>
-                        <a href="https://aistudio.google.com/" target="_blank" rel="noopener" class="text-xs text-brand-primary hover:underline flex items-center gap-1">
+                        <a href="https://aistudio.google.com/" target="_blank" rel="noopener" class="text-xs text-brand-bright hover:text-white hover:underline flex items-center gap-1 transition">
                             Get API Key <i data-lucide="external-link" class="w-3 h-3"></i>
                         </a>
                     </div>
@@ -310,31 +452,31 @@
                 <div class="space-y-1.5">
                     <label class="text-xs font-medium text-brand-text flex justify-between">
                         <span>Gemini API Key</span>
-                        <span id="key-status-label" class="text-[11px] text-yellow-500">Not Configured</span>
+                        <span id="key-status-label" class="text-[11px] text-yellow-400">Not Configured</span>
                     </label>
                     <div class="relative">
-                        <input type="password" id="api-key-input" placeholder="AIzaSy..." class="w-full bg-brand-black border border-brand-border rounded-xl pl-3.5 pr-10 py-2.5 text-xs text-brand-text focus:outline-none focus:border-brand-primary transition">
-                        <button type="button" id="btn-toggle-key-visibility" class="absolute right-3 top-2.5 text-brand-muted hover:text-brand-text">
+                        <input type="password" id="api-key-input" placeholder="AIzaSy..." class="w-full bg-[#060516] border border-brand-border rounded-xl pl-3.5 pr-10 py-2.5 text-xs text-white focus:outline-none focus:border-brand-bright transition">
+                        <button type="button" id="btn-toggle-key-visibility" class="absolute right-3 top-2.5 text-brand-muted hover:text-white transition">
                             <i data-lucide="eye" id="eye-icon" class="w-4 h-4"></i>
                         </button>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-2 pt-2">
-                    <button id="btn-save-key" class="py-2 px-3 rounded-xl bg-brand-primary hover:bg-brand-bright text-black font-medium text-xs transition">Save Key</button>
-                    <button id="btn-test-key" class="py-2 px-3 rounded-xl border border-brand-border hover:border-brand-primary text-brand-text text-xs transition">Test Connection</button>
+                <div class="grid grid-cols-2 gap-2.5 pt-2">
+                    <button id="btn-save-key" class="py-2.5 px-3 rounded-full bg-cosmic-gradient hover:bg-cosmic-gradient-hover text-white font-medium text-xs shadow-glow-purple-sm transition">Save Key</button>
+                    <button id="btn-test-key" class="py-2.5 px-3 rounded-full border border-brand-border hover:border-brand-bright bg-brand-surfaceLight/50 text-white text-xs transition">Test Connection</button>
                 </div>
 
                 <div class="flex justify-end pt-1">
-                    <button id="btn-remove-key" class="text-xs text-red-400 hover:text-red-300 underline">Remove Saved Key</button>
+                    <button id="btn-remove-key" class="text-xs text-red-400 hover:text-red-300 underline transition">Remove Saved Key</button>
                 </div>
 
-                <div id="api-test-result" class="hidden p-3 rounded-xl text-xs border"></div>
+                <div id="api-test-result" class="hidden p-3.5 rounded-2xl text-xs border"></div>
             </div>
 
-            <div class="p-4 border-t border-brand-border bg-brand-black flex justify-between items-center text-[11px] text-brand-muted">
-                <span>YOUNOVA • Developed by YOUNESS</span>
-                <button id="close-settings-bottom-btn" class="px-3 py-1.5 rounded-lg bg-brand-surfaceLight border border-brand-border hover:text-white transition">Close</button>
+            <div class="p-4 border-t border-brand-border bg-[#060516] flex justify-between items-center text-[11px] text-brand-muted">
+                <span>YOUNOVA • Developed by YOUNESS MAHZOUL</span>
+                <button id="close-settings-bottom-btn" class="px-4 py-1.5 rounded-full bg-brand-surfaceLight border border-brand-border hover:border-brand-bright text-white transition">Close</button>
             </div>
         </div>
     </div>
@@ -352,13 +494,13 @@
                 this.apiKey = localStorage.getItem('younova_gemini_key') || defaultApiKey;
                 this.currentModel = 'gemini-3-flash-preview';
                 this.currentMessages = [];
-                this.systemInstruction = `You are YOUNOVA, an advanced language model developed by the YOUNESS team (نموذج لغوي متطور تم إنشاؤه من طرف فريق عمل YOUNESS).
+                this.systemInstruction = `You are YOUNOVA, an advanced language model developed by YOUNESS MAHZOUL (نموذج لغوي متطور تم إنشاؤه من طرف YOUNESS MAHZOUL).
 
 CRITICAL SYSTEM DIRECTIVES:
 1. IDENTITY & SELF-INTRODUCTION:
-   - Your name is YOUNOVA. You were created and developed by the YOUNESS team (فريق عمل YOUNESS).
+   - Your name is YOUNOVA. You were created and developed by YOUNESS MAHZOUL (تم تطويرك من طرف YOUNESS MAHZOUL).
    - DO NOT introduce yourself or mention your name/creator at the beginning or end of standard responses unless the user explicitly asks about your identity, who created you, or who you are (e.g., "من أنت؟", "Who are you?", "من طورك؟").
-   - When explicitly asked about your identity or origin, respond clearly and politely in the user's language stating that you are YOUNOVA, an advanced AI language model developed by the YOUNESS team.
+   - When explicitly asked about your identity or origin, respond clearly and politely in the user's language stating that you are YOUNOVA, an advanced AI language model developed by YOUNESS MAHZOUL.
 
 2. LANGUAGE MATCHING:
    - Always respond in the EXACT language used by the user in their prompt (e.g., Arabic, English, French, etc.).
@@ -372,6 +514,25 @@ CRITICAL SYSTEM DIRECTIVES:
                 this.recognition = null;
 
                 this.init();
+            }
+
+            showToast(message, isError = false) {
+                const container = document.getElementById('toast-container');
+                if (!container) return;
+                const toast = document.createElement('div');
+                toast.className = `toast-notification px-4 py-2 rounded-full text-xs font-medium shadow-glow-purple border backdrop-blur-xl ${
+                    isError 
+                        ? 'bg-red-950/90 border-red-500/50 text-red-200' 
+                        : 'bg-[#121036]/95 border-brand-bright/50 text-white'
+                }`;
+                toast.innerText = message;
+                container.innerHTML = '';
+                container.appendChild(toast);
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    toast.style.transition = 'opacity 0.3s ease';
+                    setTimeout(() => toast.remove(), 300);
+                }, 2600);
             }
 
             init() {
@@ -470,6 +631,7 @@ CRITICAL SYSTEM DIRECTIVES:
                 if (input) {
                     input.value = '';
                     input.style.height = 'auto';
+                    document.getElementById('char-count').innerText = '0 chars';
                 }
 
                 document.getElementById('welcome-screen').classList.remove('hidden');
@@ -496,7 +658,7 @@ CRITICAL SYSTEM DIRECTIVES:
                 if (!text && !this.pendingFile) return;
 
                 if (!this.apiKey) {
-                    alert('Please configure your Gemini API key in settings first.');
+                    this.showToast('Please configure your Gemini API key in settings first.', true);
                     this.openSettings();
                     return;
                 }
@@ -513,6 +675,7 @@ CRITICAL SYSTEM DIRECTIVES:
 
                 input.value = '';
                 input.style.height = 'auto';
+                document.getElementById('char-count').innerText = '0 chars';
                 this.clearAttachment();
 
                 document.getElementById('welcome-screen').classList.add('hidden');
@@ -627,38 +790,44 @@ CRITICAL SYSTEM DIRECTIVES:
                     msgEl.className = 'flex gap-4 justify-start';
 
                     if (msg.role === 'user') {
+                        const isRTL = this.isArabicOrRTL(msg.content);
                         msgEl.innerHTML = `
-                            <div class="max-w-[85%] sm:max-w-[75%] space-y-1 ml-auto">
-                                <div class="bg-brand-surface border border-brand-border text-brand-text px-4 py-3 rounded-2xl rounded-tr-none text-sm leading-relaxed">
-                                    ${msg.attachment ? `<div class="text-xs text-brand-bright font-mono bg-brand-black p-1.5 rounded mb-2 border border-brand-border">📎 ${this.escapeHtml(msg.attachment.name)}</div>` : ''}
+                            <div class="max-w-[85%] sm:max-w-[75%] space-y-1.5 ml-auto">
+                                <div dir="${isRTL ? 'rtl' : 'ltr'}" class="bg-gradient-to-br from-[#1C184A] to-[#110E33] border border-brand-primary/40 text-white px-4 py-3 rounded-2xl rounded-tr-sm text-sm leading-relaxed shadow-glow-purple-sm">
+                                    ${msg.attachment ? `<div class="text-xs text-brand-bright font-mono bg-[#060516]/80 px-2.5 py-1.5 rounded-xl mb-2 border border-brand-border flex items-center gap-1.5">📎 ${this.escapeHtml(msg.attachment.name)}</div>` : ''}
                                     ${this.escapeHtml(msg.content)}
                                 </div>
-                                <div class="text-[10px] text-brand-muted text-right">
+                                <div class="text-[10px] text-brand-muted text-right pr-1">
                                     <span>${new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
                                 </div>
                             </div>
                         `;
                     } else {
                         const parsedContent = msg.pending 
-                            ? '<div class="flex items-center space-x-2 text-brand-muted"><span class="animate-pulse">Thinking...</span></div>' 
+                            ? '<div class="flex items-center space-x-2 text-brand-bright"><span class="w-2 h-2 rounded-full bg-brand-bright animate-ping"></span><span class="animate-pulse text-xs font-medium tracking-wide">Synthesizing response...</span></div>' 
                             : marked.parse(msg.content);
 
                         const isRTL = this.isArabicOrRTL(msg.content);
                         const textDir = isRTL ? 'rtl' : 'ltr';
 
                         msgEl.innerHTML = `
-                            <div class="flex gap-3 max-w-full w-full">
-                                <div class="w-7 h-7 rounded-lg bg-brand-primary/10 border border-brand-primary/30 flex items-center justify-center flex-shrink-0 text-brand-bright mt-1">
-                                    <svg class="w-4 h-4" viewBox="0 0 100 100" fill="none"><circle cx="50" cy="50" r="40" fill="#A855F7"/></svg>
+                            <div class="flex gap-3.5 max-w-full w-full">
+                                <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-brand-primary/30 to-brand-deep/40 border border-brand-bright/40 flex items-center justify-center flex-shrink-0 text-brand-bright mt-0.5 shadow-glow-purple-sm">
+                                    <svg class="w-4 h-4" viewBox="0 0 100 100" fill="none">
+                                        <ellipse cx="50" cy="50" rx="42" ry="14" stroke="currentColor" stroke-width="6" transform="rotate(0 50 50)" />
+                                        <ellipse cx="50" cy="50" rx="42" ry="14" stroke="currentColor" stroke-width="6" transform="rotate(60 50 50)" />
+                                        <ellipse cx="50" cy="50" rx="42" ry="14" stroke="currentColor" stroke-width="6" transform="rotate(120 50 50)" />
+                                        <circle cx="50" cy="50" r="12" fill="#FFFFFF"/>
+                                    </svg>
                                 </div>
-                                <div class="flex-1 min-w-0 space-y-2">
+                                <div class="flex-1 min-w-0 space-y-2 bg-[#0A091E]/75 backdrop-blur-md border border-brand-border p-4 rounded-2xl rounded-tl-sm shadow-card-glass">
                                     <div class="prose prose-invert text-sm max-w-none leading-relaxed text-brand-text message-body" dir="${textDir}">
                                         ${parsedContent}
                                     </div>
                                     ${!msg.pending ? `
-                                        <div class="flex items-center space-x-3 text-xs text-brand-muted pt-1">
-                                            <button data-action="copy-msg" data-idx="${idx}" class="hover:text-brand-bright flex items-center gap-1"><i data-lucide="copy" class="w-3.5 h-3.5"></i> Copy</button>
-                                            <button data-action="regen-msg" class="hover:text-brand-bright flex items-center gap-1"><i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Regenerate</button>
+                                        <div class="flex items-center space-x-4 text-xs text-brand-muted pt-2 border-t border-brand-border/60">
+                                            <button data-action="copy-msg" data-idx="${idx}" class="hover:text-brand-bright flex items-center gap-1.5 transition"><i data-lucide="copy" class="w-3.5 h-3.5"></i> Copy</button>
+                                            <button data-action="regen-msg" class="hover:text-brand-bright flex items-center gap-1.5 transition"><i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Regenerate</button>
                                         </div>
                                     ` : ''}
                                 </div>
@@ -703,7 +872,7 @@ CRITICAL SYSTEM DIRECTIVES:
             copyToClipboard(text) {
                 if (navigator.clipboard && navigator.clipboard.writeText) {
                     navigator.clipboard.writeText(text).then(() => {
-                        alert('Copied to clipboard!');
+                        this.showToast('Copied to clipboard!');
                     }).catch(() => {
                         this.fallbackCopyText(text);
                     });
@@ -715,19 +884,19 @@ CRITICAL SYSTEM DIRECTIVES:
             fallbackCopyText(text) {
                 const textarea = document.createElement('textarea');
                 textarea.value = text;
-                textarea.style.position = 'fixed';  // Avoid scrolling to bottom
+                textarea.style.position = 'fixed';
                 document.body.appendChild(textarea);
                 textarea.focus();
                 textarea.select();
                 try {
                     const successful = document.execCommand('copy');
                     if (successful) {
-                        alert('Copied to clipboard!');
+                        this.showToast('Copied to clipboard!');
                     } else {
-                        alert('Failed to copy text.');
+                        this.showToast('Failed to copy text.', true);
                     }
                 } catch (err) {
-                    alert('Failed to copy text.');
+                    this.showToast('Failed to copy text.', true);
                 }
                 document.body.removeChild(textarea);
             }
@@ -740,27 +909,6 @@ CRITICAL SYSTEM DIRECTIVES:
                 this.executeGeminiRequest();
             }
 
-            handleFileUpload(event) {
-                const file = event.target.files[0];
-                if (!file) return;
-
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    this.pendingFile = {
-                        name: file.name,
-                        mimeType: file.type || 'text/plain',
-                        data: e.target.result
-                    };
-                    this.renderAttachmentChip();
-                };
-
-                if (file.type.startsWith('image/')) {
-                    reader.readAsDataURL(file);
-                } else {
-                    reader.readAsText(file);
-                }
-            }
-
             renderAttachmentChip() {
                 const preview = document.getElementById('attachment-preview');
                 if (!this.pendingFile) {
@@ -770,10 +918,10 @@ CRITICAL SYSTEM DIRECTIVES:
                 }
                 preview.classList.remove('hidden');
                 preview.innerHTML = `
-                    <div class="inline-flex items-center space-x-2 bg-brand-surfaceLight border border-brand-border px-3 py-1.5 rounded-lg text-xs text-brand-bright">
+                    <div class="inline-flex items-center space-x-2 bg-[#141238] border border-brand-primary/40 px-3 py-1.5 rounded-xl text-xs text-brand-bright shadow-glow-purple-sm">
                         <i data-lucide="image" class="w-3.5 h-3.5"></i>
                         <span class="truncate max-w-xs">${this.escapeHtml(this.pendingFile.name)}</span>
-                        <button id="btn-remove-attachment" class="hover:text-red-400 p-0.5"><i data-lucide="x" class="w-3 h-3"></i></button>
+                        <button id="btn-remove-attachment" class="hover:text-red-400 p-0.5 transition"><i data-lucide="x" class="w-3 h-3"></i></button>
                     </div>
                 `;
                 document.getElementById('btn-remove-attachment')?.addEventListener('click', () => this.clearAttachment());
@@ -792,7 +940,7 @@ CRITICAL SYSTEM DIRECTIVES:
                 if (!file) return;
 
                 if (!file.type.startsWith('image/')) {
-                    alert('Please select an image file only.');
+                    this.showToast('Please select an image file only.', true);
                     return;
                 }
 
@@ -818,6 +966,7 @@ CRITICAL SYSTEM DIRECTIVES:
                         const transcript = event.results[0][0].transcript;
                         const input = document.getElementById('message-input');
                         input.value += (input.value ? ' ' : '') + transcript;
+                        document.getElementById('char-count').innerText = `${input.value.length} chars`;
                         document.getElementById('voice-btn')?.classList.remove('animate-pulse-purple', 'text-brand-bright');
                     };
                     this.recognition.onerror = () => {
@@ -828,7 +977,7 @@ CRITICAL SYSTEM DIRECTIVES:
 
             toggleVoiceInput() {
                 if (!this.recognition) {
-                    alert('Speech recognition is not supported in your browser.');
+                    this.showToast('Speech recognition is not supported in your browser.', true);
                     return;
                 }
                 const btn = document.getElementById('voice-btn');
@@ -851,17 +1000,16 @@ CRITICAL SYSTEM DIRECTIVES:
                 localStorage.setItem('younova_gemini_key', key);
 
                 this.updateKeyStatusUI();
-                alert('API key saved successfully.');
+                this.showToast('API key saved successfully.');
                 this.closeSettings();
             }
 
             removeApiKey() {
-                if (confirm('Are you sure you want to remove your API key?')) {
-                    this.apiKey = '';
-                    localStorage.removeItem('younova_gemini_key');
-                    document.getElementById('api-key-input').value = '';
-                    this.updateKeyStatusUI();
-                }
+                this.apiKey = '';
+                localStorage.removeItem('younova_gemini_key');
+                document.getElementById('api-key-input').value = '';
+                this.updateKeyStatusUI();
+                this.showToast('API key removed.');
             }
 
             async testApiConnection() {
@@ -897,13 +1045,13 @@ CRITICAL SYSTEM DIRECTIVES:
                 if (this.apiKey) {
                     if (label) {
                         label.innerText = 'Connected';
-                        label.className = 'text-[11px] text-green-400';
+                        label.className = 'text-[11px] text-emerald-400 font-medium';
                     }
                     if (keyStatusText) keyStatusText.innerText = 'Key Set';
                 } else {
                     if (label) {
                         label.innerText = 'Not Configured';
-                        label.className = 'text-[11px] text-yellow-500';
+                        label.className = 'text-[11px] text-amber-400 font-medium';
                     }
                     if (keyStatusText) keyStatusText.innerText = 'API Key';
                 }
